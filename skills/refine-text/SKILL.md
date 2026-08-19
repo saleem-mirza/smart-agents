@@ -1,140 +1,171 @@
 ---
 name: refine-text
-description: Refine, rewrite, proofread, or edit prose for clarity, accuracy, tone, and directness.
+description: Refine, rewrite, proofread, or edit prose for clarity, accuracy, tone, and directness. Use when the user asks to improve wording, rewrite text, tighten prose, polish comments, edit documents, refine commit messages, remove AI-sounding language, apply edits to file paths or globs, or refine the previous assistant prose when no argument is provided.
 ---
 
 # Refine Text
 
 Rewrite prose for clarity, accuracy, and directness while preserving meaning.
 
-## Scope
+## 1. Precedence
 
-Apply these rules to user-provided text and requested drafting or editing work, including documents, code comments, commit messages, and chat messages.
+Higher rank wins every conflict. Cite the rank when you override a lower rule.
 
-Preserve verbatim: identifiers, API names, CLI flags, config keys, file paths, error text, code blocks, inline code, quoted source material, and third-party product names.
-
-Use this skill when the user asks to improve wording, rewrite text, tighten prose, polish comments, edit documents, refine commit messages, remove AI-sounding language, apply edits to file paths or globs, or refine the previous assistant prose when no argument is provided.
-
-## Inputs
-
-If the user provides one or more file references or glob patterns, resolve the targets before editing. Refine only readable text files, overwrite each changed file with the replacement text, and report which files changed.
-
-Skip binary files, generated files, unsupported file types, unreadable files, and targets that cannot be safely rewritten as text. Report skipped files briefly.
-
-For broad globs or unexpectedly large match sets, ask before overwriting files.
-
-If the user provides static text instead of a file reference or glob, refine that text and return only the replacement text.
-
-If the user invokes the skill without a file reference, glob, or static text argument, refine the previous assistant prose in the current conversation and return only the replacement text. Do not overwrite files in this mode. If there is no previous assistant prose, report that briefly.
-
-When paths and static text are both present, treat paths or globs as file targets only when the user clearly asks to edit, refine, or apply the skill to those files. Treat path-like strings inside a sentence as static text when the user asks to rewrite the sentence itself. If intent is ambiguous, ask before overwriting files.
-
-Before overwriting files, preserve non-prose and technical literals under the scope rule. Do not rewrite code blocks, identifiers, config keys, file paths, quoted source material, or error messages unless the user explicitly asks for that exact change.
-
-If a glob matches no files or a referenced file cannot be read, report the issue briefly and do not fabricate output for that target.
-
-## Precedence
-
-Apply rules in this order:
-
-1. Accuracy.
-2. The user's explicit request.
-3. Preservation of verbatim text.
-4. User-requested tone or voice.
-5. These style rules.
-
-## Method
-
-1. Read the full text before rewriting or rephrasing. In file or glob mode, read the full target file before overwriting it, or preserve all untouched sections exactly when editing only part of a file. For static text or conversational rewrites where full context is unavailable, read enough surrounding context, usually one or two paragraphs, to understand the local meaning.
-2. Identify the source meaning, audience, context, and purpose.
-3. Keep correct content unchanged unless the user asks for a fuller rewrite or a style change improves clarity.
-4. Fix grammar, ambiguity, and imprecision.
-5. Rewrite with correct grammar.
-6. Make the text concise when clarity or accuracy improves.
-7. Prefer active voice unless the actor is unknown or irrelevant.
-8. Remove AI markers, filler, cliches, unsupported claims, repeated ideas, and setup phrases.
-9. Use one idea per sentence when practical.
-10. Keep terminology, formatting, and references consistent.
-11. Return only the requested output, unless a material risk, failure, or skipped scope needs one sentence.
-
-## Style
-
-Use clear, simple, natural language.
-
-Use "you" and "your" when direct address fits.
-
-Use data and examples when they improve accuracy.
-
-Use adjectives and adverbs only when they add information.
-
-Group related alternatives together. Number them when there is more than one.
-
-Use logical quoting. Put punctuation outside the closing quote unless the source includes it.
-
-Preserve intentional voice when it does not conflict with accuracy, clarity, or the user's explicit request. Do not flatten expressive, technical, casual, legal, academic, or brand-specific prose into generic business prose.
-
-## Professional Tone
-
-Use plain business English when the context is workplace, executive, sales, legal, finance, operations, product, or customer-facing.
-
-Prefer precise verbs: `recommend`, `approve`, `confirm`, `reduce`, `increase`, `resolve`, `prioritize`, `align`, `deliver`, `measure`, `decide`, `assign`.
-
-State the action, owner, deadline, decision, risk, tradeoff, or business impact when relevant.
-
-Prefer concrete phrasing:
-
-- `We recommend X because Y.`
-- `This reduces cost by 12%.`
-- `The main risk is delayed approval.`
-- `Next step: Legal approves the draft by Friday.`
-- `Owner: Finance. Due: August 30.`
-
-Avoid corporate filler: `synergy`, `leverage`, `circle back`, `move the needle`, `best-in-class`, `world-class`, `mission-critical`, and `strategic`, unless the term has a precise meaning in context.
-
-## Avoid
-
-Remove common AI markers: formulaic transitions, inflated phrasing, generic summaries, overbalanced sentence pairs, and vague claims.
-
-Avoid em dashes and en dashes in rewritten prose unless the user requests a style that uses them, the surrounding text already uses them intentionally, or they are part of code, CLI flags, technical terminology, or quoted material. When replacing them, use a comma, colon, period, or parentheses.
-
-Do not use "not just X, but also Y", including "not only", "not merely", and "not simply". Split into one claim per sentence.
-
-Avoid metaphors, cliches, broad generalizations, unsolicited commentary, and vague sentences that do not add useful information.
-
-Avoid these words unless needed for accuracy, legal meaning, product wording, direct quotation, user-requested tone, or preserved text: `abyss`, `actually`, `basically`, `certainly`, `craft`, `delve`, `discover`, `disruptive`, `elucidate`, `embark`, `enlightening`, `esteemed`, `furthermore`, `game-changer`, `hence`, `however`, `illuminate`, `imagine`, `intricate`, `just`, `literally`, `maybe`, `pivotal`, `probably`, `really`, `realm`, `revolutionize`, `skyrocket`, `tapestry`, `unlock`, `unveil`, `utilize`, `very`.
-
-Avoid these phrases unless needed for accuracy, legal meaning, product wording, direct quotation, or preserved text: `dive deep`, `in a world where`, `in closing`, `in conclusion`, `not alone`, `shed light`, `worth noting`.
-
-Inflections and derived forms count.
-
-## Replacements
-
-| Flagged | Use |
+| Rank | Rule |
 | --- | --- |
-| can, could, may | present tense, or `supports` / `works with`, when replacement preserves meaning |
-| utilize | use |
-| however, furthermore, hence | new sentence, or `so` |
-| just, very, really, actually, basically, literally | delete |
-| probably, certainly, maybe | state the fact, or name the condition |
-| craft | write, build |
-| discover, unlock, illuminate, unveil | show, find, explain |
-| pivotal, intricate | important, detailed |
-| em dash, en dash | comma, colon, or period |
-| "not just X, but also Y" | one claim per sentence |
+| P1 | Factual accuracy |
+| P2 | The user's explicit request |
+| P3 | Verbatim text, preserved exactly |
+| P4 | Grammatical correctness |
+| P5 | User-requested tone or voice |
+| P6 | Style rules 5 through 9 below |
+
+Two resolutions follow from this order:
+
+- P1 over P2: when the request would introduce a factual error, do the rest of the work, state the problem in one sentence, and let the user decide.
+- P2 over P4: when the user restricts the edit, respect the restriction and report the grammar error in one sentence instead of fixing it silently.
+
+## 2. The Exception Rule
+
+Every rule below yields when meaning requires it. Keep the flagged form, without asking, when it carries: factual accuracy, legal or contractual force, a domain term of art, product or brand wording, direct quotation, or a voice the user asked for.
+
+This is stated once and applies throughout. Precision outranks every ban.
+
+**Verbatim, never edited (P3):** identifiers, API names, CLI flags, config keys, file paths, error text, code blocks, inline code, quoted source material, third-party product names. Leave errors inside them as found.
+
+## 3. Inputs
+
+| Input | Action |
+| --- | --- |
+| File paths or globs | Resolve targets, read each file fully, overwrite changed files, report which changed. |
+| Static text | Return only the replacement text. |
+| No argument | Refine the previous assistant message. Return text only, never write files. If none exists, say so. |
+| Paths inside a sentence to rewrite | Treat as static text, not as targets. |
+
+- Skip binary, generated, unreadable, and non-text files. Report skips briefly.
+- Ask before overwriting on broad globs, large match sets, or ambiguous intent.
+- If a glob matches nothing or a file fails to read, say so. Never fabricate output.
+
+## 4. Edit Depth
+
+- Repair at sentence and paragraph level by default.
+- Merge sentences that carry one idea. Split a sentence that carries three.
+- Give each paragraph one job, and lead with the sentence that states it, unless the source builds to it deliberately.
+- Do not reorder sections, retitle headings, merge across a heading boundary, or delete a paragraph whole unless asked. When order blocks comprehension, refine in place and say so in one sentence.
+- In file mode, preserve heading levels, list nesting, table columns, link targets, anchors, and front matter.
+- Leave a sentence unchanged when it is already accurate, clear, and marker-free. Prefer the smallest edit that fixes the defect.
+
+## 5. Grammar (P4)
+
+Fix in any sentence you edit, including one you would otherwise leave alone.
+
+| Check | Repair |
+| --- | --- |
+| Pronoun reference | Every `it`, `this`, `that`, `they` needs one obvious antecedent. Two candidates, name the noun. The most common real ambiguity in technical prose. |
+| Subject-verb agreement | Watch a plural noun between subject and verb: `The list of accounts are stale` becomes `is stale`. |
+| Dangling modifier | An opening participle must attach to the subject: `After deploying, the tests failed` becomes `After we deployed, the tests failed`. |
+| Misplaced `only` | Put it next to what it limits. |
+| Tense consistency | Hold one tense within a passage. |
+| Parallel form | Coordinated items, list entries, and sibling headings match in grammatical shape and verb mood. |
+| Correlatives | Put `both/and`, `either/or`, `not/but` next to the elements they join. |
+| Sentence boundaries | Fix comma splices, run-ons, and fragments. Keep a fragment that is established voice. |
+
+Dialect and regional standard forms are not errors.
+
+## 6. Sentence Construction
+
+| Rule | Repair |
+| --- | --- |
+| Given to new | Start with what the reader knows, end with what is new. The highest-leverage fix for prose that parses but does not land. |
+| Active voice | Name the actor, unless the actor is unknown or irrelevant. |
+| Nominalizations | `perform an analysis of` becomes `analyze`. `provide a recommendation` becomes `recommend`. |
+| One idea per sentence | Carry one idea when practical. |
+| Varied length | A run of uniform-length sentences reads as machine output even when every sentence is correct. |
+
+## 7. AI Markers
+
+Remove. These identify machine prose more reliably than any single word.
+
+| Marker | Example | Repair |
+| --- | --- | --- |
+| Negative parallelism | `It is not a tool, it is a platform.` | State the positive claim once. |
+| `not just X, but also Y` | Includes `not only`, `not merely`, `not simply`. | One claim per sentence. |
+| Padded triple | `fast, reliable, and scalable`, where the third item adds nothing. | Cut the padding. Three real items are fine, so count content, not items. |
+| Trailing participial | `The release shipped Friday, highlighting the value of automation.` | Cut it, or make it a sentence with a stated subject. |
+| Expletive opener | `There are three reasons that the build fails.` | `The build fails for three reasons.` |
+| Overbalanced pair | Consecutive sentences of near-identical length and shape. | Vary length and structure. Merge or split. |
+| Formulaic transition | `That said,` `At the end of the day,` `When it comes to X,` | Delete, or name the actual relation. |
+| Inflated phrasing | `a comprehensive suite of capabilities` | `four features`, or name them. |
+| Generic summary | `In summary, this approach has benefits and drawbacks.` | State the benefit and the drawback. |
+| Vague claim | `This significantly improves performance.` | Give the number, or drop the claim. |
+
+Also cut: metaphors, cliches, broad generalizations, and unsolicited commentary.
+
+## 8. Words
+
+Inflections and derived forms count. Rule 2 governs every row.
+
+| Category | Words | Repair |
+| --- | --- | --- |
+| Intensifiers | `very`, `really`, `just`, `basically`, `actually`, `literally` | Delete. Meaning rarely changes. |
+| Reflexive hedges | `probably`, `maybe`, `certainly`, `perhaps` | State the fact, or name the deciding condition. Keep when the uncertainty is real: `The regression probably came from the cache change` is honest, and cutting `probably` asserts a cause nobody verified. |
+| Register mismatch | `utilize`, `delve`, `elucidate`, `embark`, `illuminate`, `unveil`, `unlock` | Plain synonym: `use`, `examine`, `explain`, `start`, `show`, `reveal`, `open`. |
+| Marketing terms | `abyss`, `realm`, `tapestry`, `game-changer`, `disruptive`, `revolutionize`, `skyrocket`, `enlightening`, `esteemed`, `pivotal`, `intricate`, `imagine` | Cut the claim, or name the specific: `important`, `detailed`. |
+| Corporate filler | `synergy`, `leverage`, `circle back`, `move the needle`, `best-in-class`, `world-class`, `mission-critical`, `strategic` | Cut, or state the concrete action. |
+| Connective tics | `however`, `furthermore`, `hence`, `moreover` | Restructure. See rule 9. |
+| Phrases | `dive deep`, `in a world where`, `in closing`, `in conclusion`, `not alone`, `shed light`, `worth noting` | Cut. |
+
+`craft` and `discover` are plain English, not markers. Flag them only when inflating: `craft a solution` becomes `build a solution`, `discover the root cause` becomes `find the root cause`.
+
+## 9. Connectives
+
+Do not open a sentence with `However,` or `Furthermore,` as a transition tic. Restructure instead of deleting the logic, and match the repair to the real relation.
+
+| Relation | Repair |
+| --- | --- |
+| Concession | `but`, or subordinate with `although` or `while`. |
+| Addition | Start the new sentence with its own subject, or join with `and`. |
+| Consequence | `so`, or state cause and effect in one sentence. |
+
+`so` is causal, so it never substitutes for a concessive. Keep the connective when restructuring would lose a genuine relation.
+
+## 10. Modality (P1)
+
+`can`, `may`, `could`, `must`, `should` carry different meanings. Never swap one for another, and never delete one as filler.
+
+| Modal | Rule |
+| --- | --- |
+| `can` | Ability. Cut only when padding a capability: `The API can support webhooks` becomes `supports`. Keep when the ability is the point, or when conditional. |
+| `may` | Permission or possibility. Keep. `You may cancel within 30 days` becomes an obligation if cut. |
+| `could` | Conditional or possibility. Keep unless it hedges a known fact, then rule 8 applies. |
+| `must`, `should` | Obligation strength. Never adjust. In policy, legal, and API contracts the difference is the requirement. |
+
+## 11. Tone and Voice
+
+- Plain, natural language. Adjectives and adverbs only when they add information.
+- Use `you` where the genre takes direct address: documentation, instructions, customer-facing copy. Narrative, legal, and academic prose usually do not.
+- Preserve intentional voice (P5). Never flatten expressive, casual, technical, legal, academic, or brand prose into generic business prose. When brand voice and business register conflict, brand voice wins.
+- Business contexts take plain business English: precise verbs (`recommend`, `approve`, `reduce`, `resolve`, `deliver`, `decide`), and state the action, owner, deadline, decision, risk, or impact. `We recommend X because Y.` `This reduces cost by 12%.` `Owner: Finance. Due: August 30.`
+- Support claims with data and examples where they improve accuracy.
+- Group related alternatives, and number them when the genre uses lists. Leave running prose as prose.
+- Logical quoting: punctuation outside the closing quote unless the source includes it.
+- No em or en dashes in rewritten prose. Use a comma, colon, period, or parentheses.
+
+## 12. Output
+
+Return only the requested output. Add one sentence only for a material risk, a failure, a skipped target, or a P1/P2 conflict.
 
 ## Examples
 
-Static text:
-
-- User: `Rewrite this: We can probably utilize the new process to really improve approvals.`
-- Return: `The new process is expected to improve approvals.`
-
-File target:
-
-- User: `Refine docs/release-notes.md.`
-- Action: Read the full file, preserve code blocks and technical literals, overwrite only the refined prose, and report `Changed docs/release-notes.md.`
-
-Ambiguous path-like text:
-
-- User: `Rewrite this sentence: Save it to docs/release-notes.md when ready.`
-- Return: `Save it to docs/release-notes.md when it is ready.`
+| Case | Before | After | Why |
+| --- | --- | --- | --- |
+| Words and hedges | `We can probably utilize the new process to really improve approvals.` | `The new process will likely speed up approvals, though we have not measured it yet.` | `utilize` and `really` go, `can` is padding. `probably` marks real uncertainty, so it survives as a stated limit. |
+| Load-bearing modal | `Reviewers may reject a submission after the deadline.` | unchanged | `may` grants permission. Cutting it makes rejection sound automatic. |
+| Given to new | `A cache invalidation bug that the team found last week causes the stale reads.` | `The stale reads come from a cache invalidation bug the team found last week.` | Known information first, new information last. |
+| Negative parallelism, vague claim | `This is not merely a refactor, it is a rethinking of the pipeline. It significantly improves throughput.` | `This refactor restructures the pipeline. Throughput rose from 4k to 11k events per second.` | One positive claim, and the number replaces `significantly`. Drop the claim when no number exists. |
+| Trailing participial | `The team shipped the migration in March, demonstrating the value of incremental rollout.` | `The team shipped the migration in March. The incremental rollout kept each step reversible.` | The participle asserted a lesson with no subject. |
+| Connective | `The cache reduced latency. However, it introduced stale reads.` | `The cache reduced latency, but it introduced stale reads.` | Concessive relation, so `but` carries it. Never `so`. |
+| Grammar over style | `Updating the config, the service failed to restart.` | `When we updated the config, the service failed to restart.` | The modifier dangled. Fix even when asked only to shorten. |
+| Paragraph merge | `The API supports webhooks. Webhooks are supported for events. You register a URL and we post to it.` | `The API supports webhooks: register a URL and we post events to it.` | Three sentences, one idea. Position in the document is unchanged. |
+| Path as text | `Rewrite this sentence: Save it to docs/release-notes.md when ready.` | `Save it to docs/release-notes.md when it is ready.` | Path sits inside the sentence, so it is static text and stays verbatim. |
+| File target | `Refine docs/release-notes.md.` | Read fully, preserve literals, overwrite prose, report `Changed docs/release-notes.md.` | File mode writes and reports. |

@@ -39,6 +39,79 @@ def parse_frontmatter(path: Path) -> tuple[dict[str, str], list[str]]:
     return fields, errors
 
 
+FENCE_RE = re.compile(r"^\s*```")
+INLINE_CODE_RE = re.compile(r"`[^`]*`")
+TABLE_ROW_RE = re.compile(r"^\s*\|")
+DASH_RE = re.compile(r"[\u2013\u2014]")
+
+FLAGGED_WORDS = (
+    "abyss actually basically certainly craft delve disruptive elucidate embark "
+    "enlightening esteemed furthermore illuminate imagine intricate literally "
+    "maybe moreover perhaps pivotal probably realm revolutionize skyrocket "
+    "tapestry unveil utilize"
+).split()
+FLAGGED_PHRASES = [
+    "game-changer",
+    "best-in-class",
+    "world-class",
+    "move the needle",
+    "circle back",
+    "dive deep",
+    "in a world where",
+    "in closing",
+    "in conclusion",
+    "shed light",
+    "worth noting",
+    "not just",
+    "not only",
+    "not merely",
+    "not simply",
+]
+
+
+def prose_lines(text: str):
+    """Yield (line_number, line) for prose only.
+
+    Skips frontmatter, fenced code, table rows, and inline code spans. The skill
+    files name every flagged term as data inside tables and inline code, so those
+    regions must not trip the lint.
+    """
+    lines = text.splitlines()
+    start = 0
+    if lines and lines[0].strip() == "---":
+        for index in range(1, len(lines)):
+            if lines[index].strip() == "---":
+                start = index + 1
+                break
+
+    in_fence = False
+    for line_number, line in enumerate(lines[start:], start=start + 1):
+        if FENCE_RE.match(line):
+            in_fence = not in_fence
+            continue
+        if in_fence or TABLE_ROW_RE.match(line):
+            continue
+        yield line_number, INLINE_CODE_RE.sub("", line)
+
+
+def lint_prose(path: Path) -> list[str]:
+    findings: list[str] = []
+
+    for line_number, line in prose_lines(path.read_text(encoding="utf-8")):
+        if DASH_RE.search(line):
+            findings.append(f"{path}:{line_number}: em or en dash in prose")
+
+        lowered = line.lower()
+        for word in FLAGGED_WORDS:
+            if re.search(rf"\b{word}\w*\b", lowered):
+                findings.append(f"{path}:{line_number}: flagged word '{word}' in prose")
+        for phrase in FLAGGED_PHRASES:
+            if phrase in lowered:
+                findings.append(f"{path}:{line_number}: flagged phrase '{phrase}' in prose")
+
+    return findings
+
+
 def validate() -> int:
     errors: list[str] = []
     seen_names: dict[str, Path] = {}
@@ -79,6 +152,8 @@ def validate() -> int:
 
         if not description:
             errors.append(f"{skill_file}: missing required field 'description'")
+
+        errors.extend(lint_prose(skill_file))
 
     if errors:
         for error in errors:
