@@ -1,6 +1,6 @@
 ---
 name: refine-text
-description: Refine, rewrite, proofread, or edit prose so it is grammatically correct, precise, plain, active, clear, and free of common AI markers. Use when the user asks to improve wording, rewrite text, tighten prose, polish comments, edit documents, refine commit messages, remove AI-sounding language, apply edits to file paths or globs, or refine the previous assistant prose when no argument is provided.
+description: Refine, rewrite, proofread, or edit prose for clarity, accuracy, tone, and directness.
 ---
 
 # Refine Text
@@ -12,6 +12,8 @@ Rewrite prose for clarity, accuracy, and directness while preserving meaning.
 Apply these rules to user-provided text and requested drafting or editing work, including documents, code comments, commit messages, and chat messages.
 
 Preserve verbatim: identifiers, API names, CLI flags, config keys, file paths, error text, code blocks, inline code, quoted source material, and third-party product names.
+
+Use this skill when the user asks to improve wording, rewrite text, tighten prose, polish comments, edit documents, refine commit messages, remove AI-sounding language, apply edits to file paths or globs, or refine the previous assistant prose when no argument is provided.
 
 ## Inputs
 
@@ -38,13 +40,14 @@ Apply rules in this order:
 1. Accuracy.
 2. The user's explicit request.
 3. Preservation of verbatim text.
-4. These style rules.
+4. User-requested tone or voice.
+5. These style rules.
 
 ## Method
 
 1. Read the full text before rewriting or rephrasing. In file or glob mode, read the full target file before overwriting it, or preserve all untouched sections exactly when editing only part of a file. For static text or conversational rewrites where full context is unavailable, read enough surrounding context, usually one or two paragraphs, to understand the local meaning.
 2. Identify the source meaning, audience, context, and purpose.
-3. Keep correct content unchanged.
+3. Keep correct content unchanged unless the user asks for a fuller rewrite or a style change improves clarity.
 4. Fix grammar, ambiguity, and imprecision.
 5. Rewrite with correct grammar.
 6. Make the text concise when clarity or accuracy improves.
@@ -68,6 +71,8 @@ Group related alternatives together. Number them when there is more than one.
 
 Use logical quoting. Put punctuation outside the closing quote unless the source includes it.
 
+Preserve intentional voice when it does not conflict with accuracy, clarity, or the user's explicit request. Do not flatten expressive, technical, casual, legal, academic, or brand-specific prose into generic business prose.
+
 ## Professional Tone
 
 Use plain business English when the context is workplace, executive, sales, legal, finance, operations, product, or customer-facing.
@@ -88,15 +93,15 @@ Avoid corporate filler: `synergy`, `leverage`, `circle back`, `move the needle`,
 
 ## Avoid
 
-Remove common AI markers: em dashes, en dashes, formulaic transitions, inflated phrasing, generic summaries, overbalanced sentence pairs, and vague claims.
+Remove common AI markers: formulaic transitions, inflated phrasing, generic summaries, overbalanced sentence pairs, and vague claims.
 
-Do not use em dashes or en dashes in rewritten prose. Replace each one with a comma, colon, period, or parentheses. Keep em dashes and en dashes only when they are part of code, CLI flags, technical terminology, or quoted material.
+Avoid em dashes and en dashes in rewritten prose unless the user requests a style that uses them, the surrounding text already uses them intentionally, or they are part of code, CLI flags, technical terminology, or quoted material. When replacing them, use a comma, colon, period, or parentheses.
 
 Do not use "not just X, but also Y", including "not only", "not merely", and "not simply". Split into one claim per sentence.
 
 Avoid metaphors, cliches, broad generalizations, unsolicited commentary, and vague sentences that do not add useful information.
 
-Avoid these words unless needed for accuracy, legal meaning, product wording, direct quotation, or preserved text: `abyss`, `actually`, `basically`, `can`, `certainly`, `could`, `craft`, `delve`, `discover`, `disruptive`, `elucidate`, `embark`, `enlightening`, `esteemed`, `furthermore`, `game-changer`, `hence`, `however`, `illuminate`, `imagine`, `intricate`, `just`, `literally`, `may`, `maybe`, `pivotal`, `probably`, `really`, `realm`, `revolutionize`, `skyrocket`, `tapestry`, `unlock`, `unveil`, `utilize`, `very`.
+Avoid these words unless needed for accuracy, legal meaning, product wording, direct quotation, user-requested tone, or preserved text: `abyss`, `actually`, `basically`, `certainly`, `craft`, `delve`, `discover`, `disruptive`, `elucidate`, `embark`, `enlightening`, `esteemed`, `furthermore`, `game-changer`, `hence`, `however`, `illuminate`, `imagine`, `intricate`, `just`, `literally`, `maybe`, `pivotal`, `probably`, `really`, `realm`, `revolutionize`, `skyrocket`, `tapestry`, `unlock`, `unveil`, `utilize`, `very`.
 
 Avoid these phrases unless needed for accuracy, legal meaning, product wording, direct quotation, or preserved text: `dive deep`, `in a world where`, `in closing`, `in conclusion`, `not alone`, `shed light`, `worth noting`.
 
@@ -116,3 +121,20 @@ Inflections and derived forms count.
 | pivotal, intricate | important, detailed |
 | em dash, en dash | comma, colon, or period |
 | "not just X, but also Y" | one claim per sentence |
+
+## Examples
+
+Static text:
+
+- User: `Rewrite this: We can probably utilize the new process to really improve approvals.`
+- Return: `The new process is expected to improve approvals.`
+
+File target:
+
+- User: `Refine docs/release-notes.md.`
+- Action: Read the full file, preserve code blocks and technical literals, overwrite only the refined prose, and report `Changed docs/release-notes.md.`
+
+Ambiguous path-like text:
+
+- User: `Rewrite this sentence: Save it to docs/release-notes.md when ready.`
+- Return: `Save it to docs/release-notes.md when it is ready.`
