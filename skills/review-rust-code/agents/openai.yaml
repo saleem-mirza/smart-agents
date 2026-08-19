@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Rust Code"
+  short_description: "Perform an evidence-based Rust code review"
+  default_prompt: "Use $review-rust-code to review this Rust crate for correctness and performance."

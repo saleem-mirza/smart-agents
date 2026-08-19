@@ -6,7 +6,9 @@ A curated collection of AI agent skills.
 
 | Skill | Description |
 | --- | --- |
+| `categorize-docs` | Reads, renames, and files loose documents into the correct folders. |
 | `refine-text` | Refines, rewrites, proofreads, and edits prose for clarity, accuracy, and directness. |
+| `review-rust-code` | Reviews Rust for correctness, soundness, concurrency, allocations, performance, and design. |
 
 `refine-text` overlaps the `humanizer` skill where both remove AI markers. Use `refine-text` to edit prose for accuracy, structure, and tone, including work you are drafting. Use `humanizer` when the only goal is stripping AI tells from finished text.
 
@@ -34,7 +36,16 @@ Skills are written as numbered rule guides, not as essays. An agent scans a skil
 
 ## Use
 
-Copy a skill directory into the target agent or Codex skills directory supported by your runtime. Keep the directory name aligned with the `name` field in `SKILL.md`.
+Symlink a skill directory into every runtime that should see it, so one file stays canonical and the copies cannot drift apart:
+
+```bash
+ln -s "$PWD/skills/review-rust-code" ~/.claude/skills/review-rust-code
+ln -s "$PWD/skills/review-rust-code" ~/.codex/skills/review-rust-code
+```
+
+Copy instead of symlinking only when a runtime cannot follow links, and re-copy on every change. Keep the directory name aligned with the `name` field in `SKILL.md`.
+
+A skill may carry runtime-specific files alongside `SKILL.md`, such as `agents/openai.yaml` for the Codex interface. Symlinking the directory carries those along; they are ignored by runtimes that do not read them.
 
 ## Validate
 
