@@ -18,7 +18,7 @@ Higher rank wins every conflict. Cite the rank when you override a lower rule.
 | P3 | Verbatim text, preserved exactly |
 | P4 | Grammatical correctness |
 | P5 | User-requested tone or voice |
-| P6 | Style rules 5 through 9 below |
+| P6 | Style rules 5 through 10 below |
 
 Two resolutions follow from this order:
 
@@ -31,7 +31,7 @@ Every rule below yields when meaning requires it. Keep the flagged form, without
 
 This is stated once and applies throughout. Precision outranks every ban.
 
-**Verbatim, never edited (P3):** identifiers, API names, CLI flags, config keys, file paths, error text, code blocks, inline code, quoted source material, third-party product names. Leave errors inside them as found.
+**Verbatim, never edited (P3):** identifiers, API names, CLI flags, config keys, file paths, error text, code blocks, inline code, quoted source material, third-party product names. Leave errors inside them as found, and leave the quotation's own punctuation and its placement against the closing mark as found.
 
 ## 3. Inputs
 
@@ -53,7 +53,8 @@ This is stated once and applies throughout. Precision outranks every ban.
 - Give each paragraph one job, and lead with the sentence that states it, unless the source builds to it deliberately.
 - Do not reorder sections, retitle headings, merge across a heading boundary, or delete a paragraph whole unless asked. When order blocks comprehension, refine in place and say so in one sentence.
 - In file mode, preserve heading levels, list nesting, table columns, link targets, anchors, and front matter.
-- Leave a sentence unchanged when it is already accurate, clear, and marker-free. Prefer the smallest edit that fixes the defect.
+- Cut redundancy at line and paragraph level as you go. See rule 7.
+- Leave a sentence unchanged when it is already accurate, clear, marker-free, and not redundant. Prefer the smallest edit that fixes the defect.
 
 ## 5. Grammar (P4)
 
@@ -82,7 +83,28 @@ Dialect and regional standard forms are not errors.
 | One idea per sentence | Carry one idea when practical. |
 | Varied length | A run of uniform-length sentences reads as machine output even when every sentence is correct. |
 
-## 7. AI Markers
+## 7. Concision
+
+Cut only what loses no information. Keep the words when deleting them removes a fact, a caveat, a number, a qualifier that changes meaning, or an attribution hedge: `it said`, `according to`, `alleged`, `reportedly`, `described as`, `billing themselves as`, `sought to`, `deemed`. A hedge marks the difference between reporting a claim and asserting it, so cutting one moves the claim into the writer's own voice. Rule 11 protects modals the same way.
+
+Concision only removes. Never add a characterizing word to an attribution: `saying` does not become `saying only`, and `said` does not become `conceded` or `admitted`. The added word asserts something the source did not.
+
+| Pattern | Example | Repair |
+| --- | --- | --- |
+| Restatement | `The job runs nightly. It is scheduled to execute once every 24 hours.` | Keep the clearer sentence, delete the other. |
+| Throat-clearing | `It is important to note that`, `It should be mentioned that`, `One thing to consider is` | Delete the frame, keep the claim. |
+| Empty qualifier | `in order to`, `at this point in time`, `due to the fact that`, `has the ability to` | `to`, `now`, `because`, `can`. Rule 11 governs the modal. |
+| Preview and recap | `The next section covers rollback.` `To recap, we covered rollback.` | Delete. The heading and the text already say it. |
+| Redundant pair | `each and every`, `first and foremost`, `plan ahead`, `end result` | Keep one word. |
+| Deducible clause | `The build failed, which means it did not succeed.` | Delete the clause the main clause already implies. |
+
+When two paragraphs make one point, merge them. Rule 4 still holds, so never delete a paragraph whole and never merge across a heading boundary.
+
+Stop when every remaining sentence carries information not available elsewhere in the text. Never cut into meaning to hit a length target.
+
+Everything the guards above do not protect is still in scope. Rearranging a sentence is not concision, so if a pass ends with the text near its original length, the cutting has not happened yet.
+
+## 8. AI Markers
 
 Remove. These identify machine prose more reliably than any single word.
 
@@ -101,7 +123,7 @@ Remove. These identify machine prose more reliably than any single word.
 
 Also cut: metaphors, cliches, broad generalizations, and unsolicited commentary.
 
-## 8. Words
+## 9. Words
 
 Inflections and derived forms count. Rule 2 governs every row.
 
@@ -112,12 +134,12 @@ Inflections and derived forms count. Rule 2 governs every row.
 | Register mismatch | `utilize`, `delve`, `elucidate`, `embark`, `illuminate`, `unveil`, `unlock` | Plain synonym: `use`, `examine`, `explain`, `start`, `show`, `reveal`, `open`. |
 | Marketing terms | `abyss`, `realm`, `tapestry`, `game-changer`, `disruptive`, `revolutionize`, `skyrocket`, `enlightening`, `esteemed`, `pivotal`, `intricate`, `imagine` | Cut the claim, or name the specific: `important`, `detailed`. |
 | Corporate filler | `synergy`, `leverage`, `circle back`, `move the needle`, `best-in-class`, `world-class`, `mission-critical`, `strategic` | Cut, or state the concrete action. |
-| Connective tics | `however`, `furthermore`, `hence`, `moreover` | Restructure. See rule 9. |
+| Connective tics | `however`, `furthermore`, `hence`, `moreover` | Restructure. See rule 10. |
 | Phrases | `dive deep`, `in a world where`, `in closing`, `in conclusion`, `not alone`, `shed light`, `worth noting` | Cut. |
 
 `craft` and `discover` are plain English, not markers. Flag them only when inflating: `craft a solution` becomes `build a solution`, `discover the root cause` becomes `find the root cause`.
 
-## 9. Connectives
+## 10. Connectives
 
 Do not open a sentence with `However,` or `Furthermore,` as a transition tic. Restructure instead of deleting the logic, and match the repair to the real relation.
 
@@ -129,7 +151,7 @@ Do not open a sentence with `However,` or `Furthermore,` as a transition tic. Re
 
 `so` is causal, so it never substitutes for a concessive. Keep the connective when restructuring would lose a genuine relation.
 
-## 10. Modality (P1)
+## 11. Modality (P1)
 
 `can`, `may`, `could`, `must`, `should` carry different meanings. Never swap one for another, and never delete one as filler.
 
@@ -137,10 +159,10 @@ Do not open a sentence with `However,` or `Furthermore,` as a transition tic. Re
 | --- | --- |
 | `can` | Ability. Cut only when padding a capability: `The API can support webhooks` becomes `supports`. Keep when the ability is the point, or when conditional. |
 | `may` | Permission or possibility. Keep. `You may cancel within 30 days` becomes an obligation if cut. |
-| `could` | Conditional or possibility. Keep unless it hedges a known fact, then rule 8 applies. |
+| `could` | Conditional or possibility. Keep unless it hedges a known fact, then rule 9 applies. |
 | `must`, `should` | Obligation strength. Never adjust. In policy, legal, and API contracts the difference is the requirement. |
 
-## 11. Tone and Voice
+## 12. Tone and Voice
 
 - Plain, natural language. Adjectives and adverbs only when they add information.
 - Use `you` where the genre takes direct address: documentation, instructions, customer-facing copy. Narrative, legal, and academic prose usually do not.
@@ -148,10 +170,10 @@ Do not open a sentence with `However,` or `Furthermore,` as a transition tic. Re
 - Business contexts take plain business English: precise verbs (`recommend`, `approve`, `reduce`, `resolve`, `deliver`, `decide`), and state the action, owner, deadline, decision, risk, or impact. `We recommend X because Y.` `This reduces cost by 12%.` `Owner: Finance. Due: August 30.`
 - Support claims with data and examples where they improve accuracy.
 - Group related alternatives, and number them when the genre uses lists. Leave running prose as prose.
-- Logical quoting: punctuation outside the closing quote unless the source includes it.
+- Logical quoting, for quote marks you introduce: punctuation outside the closing mark unless it belongs to the quoted words. Never restyle punctuation in quoted source material, and never move a mark across the closing quote of an existing quotation (P3). Match the source document's existing convention rather than imposing one.
 - No em or en dashes in rewritten prose. Use a comma, colon, period, or parentheses.
 
-## 12. Output
+## 13. Output
 
 Return only the requested output. Add one sentence only for a material risk, a failure, a skipped target, or a P1/P2 conflict.
 
@@ -168,4 +190,8 @@ Return only the requested output. Add one sentence only for a material risk, a f
 | Grammar over style | `Updating the config, the service failed to restart.` | `When we updated the config, the service failed to restart.` | The modifier dangled. Fix even when asked only to shorten. |
 | Paragraph merge | `The API supports webhooks. Webhooks are supported for events. You register a URL and we post to it.` | `The API supports webhooks: register a URL and we post events to it.` | Three sentences, one idea. Position in the document is unchanged. |
 | Path as text | `Rewrite this sentence: Save it to docs/release-notes.md when ready.` | `Save it to docs/release-notes.md when it is ready.` | Path sits inside the sentence, so it is static text and stays verbatim. |
+| Restatement | `It is important to note that the cache layer sits in front of the database. The cache layer is placed before the database so reads do not hit it directly.` | `The cache sits in front of the database, so reads do not hit it directly.` | Throat-clearing frame, then a sentence restating the first. Merged, and no fact lost. |
+| Quote punctuation | `"...reserved for qualified Americans in need," a spokesperson said.` | unchanged | The comma sits inside the closing mark in the source. P3 outranks the logical-quoting style rule, so the placement stays. |
+| Attribution hedge | `The department plans to revoke the visas of people who, it said, came billing themselves as visitors.` | unchanged | `it said` and `billing themselves as` look like padding but attribute the characterization. Cutting them asserts it as fact. |
+| Concision floor | `The job retries three times. Each retry waits twice as long as the last, so the third wait is four seconds.` | unchanged | The second sentence looks like restatement but carries the backoff rule and a number. Cutting it loses information, so rule 7 stops. |
 | File target | `Refine docs/release-notes.md.` | Read fully, preserve literals, overwrite prose, report `Changed docs/release-notes.md.` | File mode writes and reports. |
