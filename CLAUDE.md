@@ -1,24 +1,31 @@
-## VERY IMPORTANT
+# smart-agents
 
-- Be simple. Approach tasks in a simple, incremental way.
-- Work incrementally ALWAYS. Small, simple steps, Validate and check each increment before moving on.
-- Use LATEST apis as of NOW
+## 1. Core principles
 
-## mandatory Code Style
+- Be simple. Do not overengineer. Do not program defensively.
+- Work incrementally, in small steps. Validate each increment before moving on.
+- Use the latest library APIs as of now.
 
-- Do not overengineer. Do not program defensively.
-- Identify root cause before fixing issues. Prove with evidence, than fix.
-- Work incrementally with small steps. Validate each increment.
-- Use latest library APIs.
-- Favor clear, concise docstring comments. 
-- Favor short modules, short methods and functions. Name things clearly
+## 2. Code style
+
+- Favor short modules, short methods and functions. Name things clearly.
+- Favor clear, concise docstring comments.
 - Never use emojis in code, logging, or any text.
-- Keep README.md concise
+- Keep README.md concise.
 
-## Important - debugging and fixing
+## 3. Debugging and fixing
 
-- When troubleshooting, ALWAYS identify root cause before fixing
-- Reproduce consistently
-- PROVE the problem first - don't guess
-- Try one test at a time. Be methodical
-- Don't jump to conclusions. Don't apply workarrounds.
+- Identify root cause before fixing. Prove the problem with evidence, don't guess.
+- Reproduce the problem consistently.
+- Try one test at a time. Be methodical.
+- Don't jump to conclusions. Don't apply workarounds.
+
+## 4. This repository
+
+smart-agents is a collection of agent skills under `skills/<skill-name>/SKILL.md`.
+
+- Write skills as numbered rule guides, not essays: precedence table first, tables over prose, stable rule IDs (`P1`, `rule 8`), one examples table at the end. See `skills/refine-text/SKILL.md` as the reference implementation.
+- Run `python3 scripts/validate_skills.py` before committing any skill change.
+- Directory name must match the `name` field in frontmatter. `description` is trigger guidance, not marketing copy.
+- Skills are distributed by symlinking the directory into each runtime (`~/.claude/skills/`, `~/.codex/skills/`), never copied.
+- Full authoring rules live in `CONTRIBUTING.md`.
