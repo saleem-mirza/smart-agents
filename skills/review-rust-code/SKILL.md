@@ -1,7 +1,7 @@
 ---
 name: review-rust-code
 description: Review Rust code for correctness, soundness, concurrency, allocations, performance, and design. Use when the user asks to review a Rust crate, module, file, diff, or pull request, audit an unsafe block, check for races, leaks, or panics, or find allocation and performance problems in Rust.
-argument-hint: [path, PR number, or `diff`; empty = current folder]
+argument-hint: "[path, PR number, or `diff`; empty = current folder]"
 ---
 
 # Rust Code Review
