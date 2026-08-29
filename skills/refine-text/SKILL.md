@@ -1,197 +1,240 @@
 ---
 name: refine-text
-description: Refine, rewrite, proofread, or edit prose for clarity, accuracy, tone, and directness. Use when the user asks to improve wording, rewrite text, tighten prose, polish comments, edit documents, refine commit messages, remove AI-sounding language, apply edits to file paths or globs, or refine the previous assistant prose when no argument is provided.
+description: Refine, rewrite, proofread, or edit prose for clarity, accuracy, tone, directness, and genre-appropriate style. Use when the user asks to improve wording, tighten prose, remove AI-sounding language, edit text or files, or adapt supplied prose to a judicial, journalistic, public-service, developer-documentation, product, UI, or general register.
 ---
 
 # Refine Text
 
-Rewrite prose for clarity, accuracy, and directness while preserving meaning.
+Rewrite prose for clarity, accuracy, and directness while preserving its facts, meaning, and intended voice.
 
 ## 1. Precedence
 
-Higher rank wins every conflict. Cite the rank when you override a lower rule.
+Higher rank wins every conflict. Cite the rank only when a conflict affects the output.
 
 | Rank | Rule |
 | --- | --- |
-| P1 | Factual accuracy |
+| P1 | Factual accuracy and source fidelity |
 | P2 | The user's explicit request |
-| P3 | Verbatim text, preserved exactly |
+| P3 | Protected verbatim text |
 | P4 | Grammatical correctness |
-| P5 | User-requested tone or voice |
-| P6 | Style rules 5 through 10 below |
+| P5 | Supplied binding house style or required format |
+| P6 | Selected genre profile and requested voice |
+| P7 | Default editorial guidance |
 
-Two resolutions follow from this order:
+- P1 over P2: never introduce an unsupported factual claim. Complete the rest of the work, state the problem in one sentence, and let the user decide.
+- P2 over P3: edit inside user-authored dialogue or quoted copy only when the user explicitly asks. Otherwise preserve quoted source material.
+- P2 over P4: when the user restricts the edit, respect the restriction and report a remaining grammar error in one sentence instead of fixing it silently.
+- P5 over P6: a supplied court, newsroom, agency, publication, or organizational guide outranks a general genre profile.
 
-- P1 over P2: when the request would introduce a factual error, do the rest of the work, state the problem in one sentence, and let the user decide.
-- P2 over P4: when the user restricts the edit, respect the restriction and report the grammar error in one sentence instead of fixing it silently.
+## 2. Fidelity and Protected Text
 
-## 2. The Exception Rule
+Never invent facts, figures, quotations, examples, anecdotes, experiences, citations, measurements, or supporting evidence. Use only information supplied by the user or source. Do not turn an attributed claim into the writer's assertion.
 
-Every rule below yields when meaning requires it. Keep the flagged form, without asking, when it carries: factual accuracy, legal or contractual force, a domain term of art, product or brand wording, direct quotation, or a voice the user asked for.
+Every default style rule yields when meaning requires it. Preserve a flagged form when it carries factual accuracy, legal or contractual force, a term of art, product or brand wording, direct quotation, deliberate emphasis, or a voice the user requested. Precision outranks every style preference.
 
-This is stated once and applies throughout. Precision outranks every ban.
-
-**Verbatim, never edited (P3):** identifiers, API names, CLI flags, config keys, file paths, error text, code blocks, inline code, quoted source material, third-party product names. Leave errors inside them as found, and leave the quotation's own punctuation and its placement against the closing mark as found.
+**Protected verbatim text (P3):** identifiers, API names, CLI flags, config keys, file paths, error text, code blocks, inline code, quoted source material, and third-party product names. Leave errors inside them as found. Preserve the punctuation and placement of existing quotations. Factual accuracy does not authorize altering a quotation; it requires preserving the quotation and its attribution.
 
 ## 3. Inputs
 
 | Input | Action |
 | --- | --- |
-| File paths or globs | Resolve targets, read each file fully, overwrite changed files, report which changed. |
+| File paths or globs | Resolve targets, read each file fully, overwrite changed files, and report which changed. |
 | Static text | Return only the replacement text. |
-| No argument | Refine the previous assistant message. Return text only, never write files. If none exists, say so. |
+| No argument | Refine the previous assistant message. Return text only and never write files. If none exists, say so. |
 | Paths inside a sentence to rewrite | Treat as static text, not as targets. |
 
 - Skip binary, generated, unreadable, and non-text files. Report skips briefly.
 - Ask before overwriting on broad globs, large match sets, or ambiguous intent.
 - If a glob matches nothing or a file fails to read, say so. Never fabricate output.
 
-## 4. Edit Depth
+## Style Profiles
+
+Choose one primary profile. Read only the references required for the current text.
+
+| Text or request | Reference |
+| --- | --- |
+| Grammar, syntax, collocation, modality, dialect, or disputed usage needs attention | Read [grammar-and-syntax.md](references/grammar-and-syntax.md). This foundation may accompany any profile. |
+| Judicial opinion or order | Read [judicial.md](references/judicial.md). Do not use it for briefs, contracts, statutes, or regulations unless the user explicitly requests judicial-opinion style. |
+| News report, news release, or journalistic copy | Read [journalism.md](references/journalism.md). |
+| U.S. federal notice, instruction, benefit or service information, form text, or other public-facing agency copy | Read [public-service.md](references/public-service.md). Do not apply it automatically to statutes, regulations, contracts, or adjudicative text. |
+| Google-style developer documentation, API guide, tutorial, or technical reference | Read [google-developer-docs.md](references/google-developer-docs.md). |
+| Microsoft-style product documentation, UI text, help content, procedure, or error message | Read [microsoft-writing.md](references/microsoft-writing.md). |
+| General prose or no clear profile | Use this file without a genre reference. Read the grammar reference only when needed. |
+
+Resolve style in this order: the user's explicit request, a supplied binding or house guide, a clearly established document type, consistent document-wide conventions, then genre defaults. Do not mistake an isolated inconsistency for house style.
+
+When profiles overlap, choose the profile that matches the document's primary function and borrow only necessary constraints from another. For example, a court's public notice may use the public-service profile while preserving judicial terminology. If the choice would materially change the result and the intended function is unclear, ask; otherwise use general refinement.
+
+Do not infer Google or Microsoft house style merely because a document discusses one company's product. When neither profile is explicitly requested, prefer Google for clearly developer-facing documentation, Microsoft for clearly product- or UI-facing help, and general refinement when the distinction is unclear.
+
+A profile governs style and organization only. It never authorizes new facts, legal analysis, reporting, citations, holdings, policy, or substantive requirements.
+
+## 4. Context and Edit Depth
+
+Before editing, identify the text's purpose, audience, genre, point of view, formality, emotional register, terminology, voice, and structural conventions. Resolve context in this order: the user's explicit request, consistent document-wide conventions, then genre defaults. Do not mistake an isolated inconsistency for intentional voice. When the context does not establish a special register, use plain natural language. Do not manufacture personality, opinions, emotion, or personal experience.
+
+Preserve source-supplied first-person observations, anecdotes, concrete nouns, dates, locations, sensory details, and distinctive phrasing when they contribute meaning or voice. Never manufacture them.
 
 - Repair at sentence and paragraph level by default.
 - Merge sentences that carry one idea. Split a sentence that carries three.
-- Give each paragraph one job, and lead with the sentence that states it, unless the source builds to it deliberately.
-- Do not reorder sections, retitle headings, merge across a heading boundary, or delete a paragraph whole unless asked. When order blocks comprehension, refine in place and say so in one sentence.
+- Give each paragraph one job, and lead with the sentence that states it unless the source deliberately builds to it.
+- Do not reorder sections, retitle headings, or merge across a heading boundary unless asked. When order blocks comprehension, refine in place and say so in one sentence.
+- When adjacent paragraphs make one point, merge them without removing unique information.
 - In file mode, preserve heading levels, list nesting, table columns, link targets, anchors, and front matter.
-- Cut redundancy at line and paragraph level as you go. See rule 7.
-- Leave a sentence unchanged when it is already accurate, clear, marker-free, and not redundant. Prefer the smallest edit that fixes the defect.
+- Leave a sentence unchanged when it is already accurate, clear, natural, and not redundant. Prefer the smallest edit that fixes the defect.
 
-## 5. Grammar (P4)
+## 5. Grammar and Terminology (P4)
 
-Fix in any sentence you edit, including one you would otherwise leave alone.
+Fix grammatical errors throughout the requested scope, including sentences that need no stylistic edit. Dialect and regional standard forms are not errors.
 
 | Check | Repair |
 | --- | --- |
-| Pronoun reference | Every `it`, `this`, `that`, `they` needs one obvious antecedent. Two candidates, name the noun. The most common real ambiguity in technical prose. |
-| Subject-verb agreement | Watch a plural noun between subject and verb: `The list of accounts are stale` becomes `is stale`. |
-| Dangling modifier | An opening participle must attach to the subject: `After deploying, the tests failed` becomes `After we deployed, the tests failed`. |
-| Misplaced `only` | Put it next to what it limits. |
-| Tense consistency | Hold one tense within a passage. |
-| Parallel form | Coordinated items, list entries, and sibling headings match in grammatical shape and verb mood. |
-| Correlatives | Put `both/and`, `either/or`, `not/but` next to the elements they join. |
-| Sentence boundaries | Fix comma splices, run-ons, and fragments. Keep a fragment that is established voice. |
-
-Dialect and regional standard forms are not errors.
+| Pronoun reference | Give every `it`, `this`, `that`, and `they` one obvious antecedent. When two nouns compete, name the intended noun. |
+| Subject-verb agreement | Ignore intervening nouns when matching the subject and verb: `The list of accounts are stale` becomes `is stale`. |
+| Dangling modifier | Attach an opening modifier to the grammatical subject: `After deploying, the tests failed` becomes `After we deployed, the tests failed`. |
+| Misplaced `only` | Put `only` next to what it limits. |
+| Tense consistency | Hold one tense within a passage unless the timeline requires a change. |
+| Parallel form | Give coordinated items, list entries, and sibling headings matching grammatical forms and verb moods. |
+| Correlatives | Put `both/and`, `either/or`, and `not/but` next to the elements they join. |
+| Sentence boundaries | Fix comma splices, run-ons, and unintended fragments. Preserve a fragment that belongs to the established voice. |
+| Terminology | Use the same term for the same concept. Do not alternate among near-synonyms merely for variety. Preserve domain distinctions, capitalization, and terms of art. Do not merge terms that may differ without evidence from the source. |
 
 ## 6. Sentence Construction
 
 | Rule | Repair |
 | --- | --- |
-| Given to new | Start with what the reader knows, end with what is new. The highest-leverage fix for prose that parses but does not land. |
-| Active voice | Name the actor, unless the actor is unknown or irrelevant. |
-| Nominalizations | `perform an analysis of` becomes `analyze`. `provide a recommendation` becomes `recommend`. |
-| One idea per sentence | Carry one idea when practical. |
-| Varied length | A run of uniform-length sentences reads as machine output even when every sentence is correct. |
+| Given to new | Start with what the reader knows and end with what is new. |
+| Active voice | Name the actor unless the actor is unknown or irrelevant. |
+| Nominalizations | `perform an analysis of` becomes `analyze`; `provide a recommendation` becomes `recommend`. |
+| One idea per sentence | Carry one main idea when practical. |
+| Natural rhythm | Break runs of uniform sentence length, repeated openings, identical clause patterns, and overbalanced pairs. Vary structure only when it improves clarity, rhythm, or emphasis. |
 
 ## 7. Concision
 
-Cut only what loses no information. Keep the words when deleting them removes a fact, a caveat, a number, a qualifier that changes meaning, or an attribution hedge: `it said`, `according to`, `alleged`, `reportedly`, `described as`, `billing themselves as`, `sought to`, `deemed`. A hedge marks the difference between reporting a claim and asserting it, so cutting one moves the claim into the writer's own voice. Rule 11 protects modals the same way.
+Cut only what loses no fact, function, caveat, emphasis, or intentional voice. Keep numbers and qualifiers that change meaning. Preserve attribution and evidentiary hedges such as `it said`, `according to`, `alleged`, `reportedly`, `described as`, `billing themselves as`, `sought to`, and `deemed`. Cutting one can turn a reported claim into the writer's assertion.
 
-Concision only removes. Never add a characterizing word to an attribution: `saying` does not become `saying only`, and `said` does not become `conceded` or `admitted`. The added word asserts something the source did not.
+Never add a characterizing word to an attribution: `said` does not become `conceded` or `admitted`. The added word asserts something the source did not.
 
 | Pattern | Example | Repair |
 | --- | --- | --- |
-| Restatement | `The job runs nightly. It is scheduled to execute once every 24 hours.` | Keep the clearer sentence, delete the other. |
-| Throat-clearing | `It is important to note that`, `It should be mentioned that`, `One thing to consider is` | Delete the frame, keep the claim. |
-| Empty qualifier | `in order to`, `at this point in time`, `due to the fact that`, `has the ability to` | `to`, `now`, `because`, `can`. Rule 11 governs the modal. |
-| Preview and recap | `The next section covers rollback.` `To recap, we covered rollback.` | Delete. The heading and the text already say it. |
-| Redundant pair | `each and every`, `first and foremost`, `plan ahead`, `end result` | Keep one word. |
-| Deducible clause | `The build failed, which means it did not succeed.` | Delete the clause the main clause already implies. |
+| Restatement | `The job runs nightly. It is scheduled to execute once every 24 hours.` | Keep the clearer sentence. |
+| Throat-clearing | `It is important to note that`, `It should be mentioned that`, `One thing to consider is` | Delete the frame and keep the claim. |
+| Empty qualifier | `in order to`, `at this point in time`, `due to the fact that`, `has the ability to` | Use `to`, `now`, `because`, or `can`, subject to the modality rules. |
+| Preview and recap | `The next section covers rollback.` `To recap, we covered rollback.` | Delete when the heading and body already make the point. |
+| Redundant pair | `each and every`, `first and foremost`, `plan ahead`, `end result` | Keep the word that carries the meaning. |
+| Deducible clause | `The build failed, which means it did not succeed.` | Delete the clause that the main clause already implies. |
+| Audience-obvious explanation | Background the intended audience can reasonably be expected to know | Remove only when it does not support the argument or prevent ambiguity. |
 
-When two paragraphs make one point, merge them. Rule 4 still holds, so never delete a paragraph whole and never merge across a heading boundary.
-
-Stop when every remaining sentence carries information not available elsewhere in the text. Never cut into meaning to hit a length target.
-
-Everything the guards above do not protect is still in scope. Rearranging a sentence is not concision, so if a pass ends with the text near its original length, the cutting has not happened yet.
+A successful edit may remain close to the original length. Stop when further cutting would remove meaning, useful emphasis, or voice. Never cut into meaning to hit a length target.
 
 ## 8. AI Markers
 
-Remove. These identify machine prose more reliably than any single word.
+AI markers are contextual patterns, not proof of authorship or forbidden words. Judge them across the sentence, paragraph, and document. Remove a marker when it makes the prose generic, repetitive, mechanical, inflated, or poorly adapted to its context. Preserve it when it carries meaning, factual uncertainty, attribution, required disclosure, or intentional voice.
 
-| Marker | Example | Repair |
+| Marker | Detect | Repair |
 | --- | --- | --- |
-| Negative parallelism | `It is not a tool, it is a platform.` | State the positive claim once. |
-| `not just X, but also Y` | Includes `not only`, `not merely`, `not simply`. | One claim per sentence. |
-| Padded triple | `fast, reliable, and scalable`, where the third item adds nothing. | Cut the padding. Three real items are fine, so count content, not items. |
-| Trailing participial | `The release shipped Friday, highlighting the value of automation.` | Cut it, or make it a sentence with a stated subject. |
-| Expletive opener | `There are three reasons that the build fails.` | `The build fails for three reasons.` |
-| Overbalanced pair | Consecutive sentences of near-identical length and shape. | Vary length and structure. Merge or split. |
-| Formulaic transition | `That said,` `At the end of the day,` `When it comes to X,` | Delete, or name the actual relation. |
-| Inflated phrasing | `a comprehensive suite of capabilities` | `four features`, or name them. |
-| Generic summary | `In summary, this approach has benefits and drawbacks.` | State the benefit and the drawback. |
-| Vague claim | `This significantly improves performance.` | Give the number, or drop the claim. |
+| Generic or overly formal tone | Bland neutrality, impersonal phrasing, or a register that does not suit the document | Match the user's requested voice. When none is specified, infer an appropriate register from the document's purpose, audience, genre, and strongest natural passages. Do not add opinions, emotion, or enthusiasm absent from the source. |
+| Repetition | Repeated words, claims, examples, sentence openings, grammatical structures, or paragraph conclusions | Consolidate only what adds no information, emphasis, qualification, or rhythm. |
+| Unnecessary explanation | Background, previews, recaps, or deductions the audience does not need | Keep the claim and remove the scaffolding. Preserve context needed for comprehension. |
+| Generic abstraction | Vague language where the source already supplies concrete detail | Use the supplied detail. Never invent anecdotes, experiences, measurements, quotations, or examples. |
+| Predictable syntax | Uniform sentence length, repeated `X is Y because` forms, matched paragraph shapes, or formulaic introductions and conclusions | Vary openings and structure where it improves the reading flow. |
+| Terminology drift | Different words used for the same concept without a reason, or technical terms used imprecisely | Apply the terminology rule in section 5. |
+| Negative parallelism | `It is not a tool, it is a platform` or `not just X, but also Y` used as a stock contrast | State the positive claim directly. Preserve a contrast that carries real meaning or voice. |
+| Padded list | A trio such as `fast, reliable, and scalable` in which an item adds no information | Keep every substantive item and cut padding. Count content, not items. |
+| Trailing participial | A sentence ends with an `-ing` clause that adds a vague lesson or claim | Cut the clause, or make it a sentence with a stated subject using only source-supported information. |
+| Expletive opener | `There are three reasons that the build fails` | Name the subject: `The build fails for three reasons`. |
+| Forced transition | `Additionally`, `Moreover`, `That said`, or another transition merely announces movement | Remove it, or state the actual relation: addition, contrast, cause, consequence, or sequence. Check paragraph-to-paragraph flow. |
+| Generic summary | `In summary, this approach has benefits and drawbacks` | State the actual benefit and drawback when the source provides them; otherwise remove the empty summary. |
+| Vague claim | `This significantly improves performance` without supporting detail | Use a measurement only when the source provides one. Otherwise preserve the claim, refine it with supplied information, or flag it for verification. Never invent evidence. |
+| Empty hedge | `It is important to note that` or `In general` delays a claim without expressing uncertainty | Remove the frame. Preserve hedges that mark probability, attribution, legal qualification, evidentiary limits, or confidence. |
+| AI self-reference | Irrelevant boilerplate such as `As an AI language model` | Remove it when it does not belong in the requested document. Preserve AI references when AI is the subject, the wording is quoted, or disclosure is required. |
+| Context mismatch | The text defaults to a generic template instead of the document's genre, audience, intent, or voice | Apply the context pass in section 4. Do not turn specialized or expressive prose into generic business language. |
 
-Also cut: metaphors, cliches, broad generalizations, and unsolicited commentary.
+Cut clichés, empty metaphors, unsupported generalizations, promotional judgments, and unsolicited commentary. Preserve figurative language that carries meaning or belongs to the requested voice.
 
-## 9. Words
+## 9. Words in Context
 
-Inflections and derived forms count. Rule 2 governs every row.
+Never treat an isolated word as proof of AI writing. Inflections and derived forms count only when the use has the same defect.
 
-| Category | Words | Repair |
+| Category | Common examples | Repair |
 | --- | --- | --- |
-| Intensifiers | `very`, `really`, `just`, `basically`, `actually`, `literally` | Delete. Meaning rarely changes. |
-| Reflexive hedges | `probably`, `maybe`, `certainly`, `perhaps` | State the fact, or name the deciding condition. Keep when the uncertainty is real: `The regression probably came from the cache change` is honest, and cutting `probably` asserts a cause nobody verified. |
-| Register mismatch | `utilize`, `delve`, `elucidate`, `embark`, `illuminate`, `unveil`, `unlock` | Plain synonym: `use`, `examine`, `explain`, `start`, `show`, `reveal`, `open`. |
-| Marketing terms | `abyss`, `realm`, `tapestry`, `game-changer`, `disruptive`, `revolutionize`, `skyrocket`, `enlightening`, `esteemed`, `pivotal`, `intricate`, `imagine` | Cut the claim, or name the specific: `important`, `detailed`. |
-| Corporate filler | `synergy`, `leverage`, `circle back`, `move the needle`, `best-in-class`, `world-class`, `mission-critical`, `strategic` | Cut, or state the concrete action. |
-| Connective tics | `however`, `furthermore`, `hence`, `moreover` | Restructure. See rule 10. |
-| Phrases | `dive deep`, `in a world where`, `in closing`, `in conclusion`, `not alone`, `shed light`, `worth noting` | Cut. |
+| Empty intensifiers | `very`, `really`, `just`, `basically`, `actually`, `literally` | Delete only when the degree, restriction, correction, or emphasis does not change meaning. |
+| Reflexive hedges | `probably`, `maybe`, `certainly`, `perhaps` | Remove only when they do not express real uncertainty. `The regression probably came from the cache change` must remain uncertain unless the cause is verified. |
+| Register mismatch | `utilize`, `delve`, `elucidate`, `embark`, `illuminate`, `unveil`, `unlock` | Prefer a plain synonym when the formal word adds no precision. |
+| Inflated or promotional usage | `game-changer`, `best-in-class`, `world-class`, `revolutionize`, `skyrocket`, `pivotal`, `strategic` | Cut the judgment or state the concrete source-supported action, result, or importance. Preserve an ordinary or domain-specific use. |
+| Corporate filler | `synergy`, `leverage`, `circle back`, `move the needle`, `mission-critical` | State the concrete action when the phrase obscures it. |
+| Formulaic phrases | `dive deep`, `in a world where`, `in closing`, `in conclusion`, `shed light`, `worth noting` | Remove the frame or state the point directly. |
 
-`craft` and `discover` are plain English, not markers. Flag them only when inflating: `craft a solution` becomes `build a solution`, `discover the root cause` becomes `find the root cause`.
+`craft`, `discover`, `imagine`, `realm`, `intricate`, and similar words are ordinary English. Replace them only when their particular use inflates or obscures the meaning.
 
-## 10. Connectives
+## 10. Connectives and Flow
 
-Do not open a sentence with `However,` or `Furthermore,` as a transition tic. Restructure instead of deleting the logic, and match the repair to the real relation.
+Do not delete a connective when doing so loses a genuine relation. Match the repair to the logic.
 
 | Relation | Repair |
 | --- | --- |
-| Concession | `but`, or subordinate with `although` or `while`. |
-| Addition | Start the new sentence with its own subject, or join with `and`. |
-| Consequence | `so`, or state cause and effect in one sentence. |
+| Concession | Use `but`, or subordinate with `although` or `while`. |
+| Addition | Start the sentence with its subject, or join related clauses with `and`. |
+| Cause or consequence | Use `because` or `so`, or state cause and effect in one sentence. |
+| Sequence | State the event or step that follows instead of announcing that another point is coming. |
 
-`so` is causal, so it never substitutes for a concessive. Keep the connective when restructuring would lose a genuine relation.
+`so` is causal and never substitutes for a concession.
 
 ## 11. Modality (P1)
 
-`can`, `may`, `could`, `must`, `should` carry different meanings. Never swap one for another, and never delete one as filler.
+`can`, `may`, `could`, `must`, and `should` carry different meanings. Never swap one for another, and never delete one as filler.
 
 | Modal | Rule |
 | --- | --- |
-| `can` | Ability. Cut only when padding a capability: `The API can support webhooks` becomes `supports`. Keep when the ability is the point, or when conditional. |
+| `can` | Ability. Cut only when padding a capability: `The API can support webhooks` becomes `supports`. Keep when ability or a condition is the point. |
 | `may` | Permission or possibility. Keep. `You may cancel within 30 days` becomes an obligation if cut. |
-| `could` | Conditional or possibility. Keep unless it hedges a known fact, then rule 9 applies. |
+| `could` | Conditional or possibility. Keep unless it hedges a verified fact. |
 | `must`, `should` | Obligation strength. Never adjust. In policy, legal, and API contracts the difference is the requirement. |
 
 ## 12. Tone and Voice
 
-- Plain, natural language. Adjectives and adverbs only when they add information.
-- Use `you` where the genre takes direct address: documentation, instructions, customer-facing copy. Narrative, legal, and academic prose usually do not.
-- Preserve intentional voice (P5). Never flatten expressive, casual, technical, legal, academic, or brand prose into generic business prose. When brand voice and business register conflict, brand voice wins.
-- Business contexts take plain business English: precise verbs (`recommend`, `approve`, `reduce`, `resolve`, `deliver`, `decide`), and state the action, owner, deadline, decision, risk, or impact. `We recommend X because Y.` `This reduces cost by 12%.` `Owner: Finance. Due: August 30.`
-- Support claims with data and examples where they improve accuracy.
+- Use plain, natural language unless the genre or requested voice calls for another register.
+- Use `you` where the genre takes direct address, including documentation, instructions, and customer-facing copy. Narrative, legal, and academic prose usually do not.
+- Preserve expressive, casual, technical, legal, academic, journalistic, and brand voices. Never flatten them into generic business prose.
+- In business prose, state the action, owner, deadline, decision, risk, or impact when the source supplies it.
+- Support claims only with facts, data, examples, or citations supplied by the user or source.
 - Group related alternatives, and number them when the genre uses lists. Leave running prose as prose.
-- Logical quoting, for quote marks you introduce: punctuation outside the closing mark unless it belongs to the quoted words. Never restyle punctuation in quoted source material, and never move a mark across the closing quote of an existing quotation (P3). Match the source document's existing convention rather than imposing one.
-- No em or en dashes in rewritten prose. Use a comma, colon, period, or parentheses.
+- For quote marks you introduce, follow the source document's punctuation convention. Never restyle punctuation in quoted source material or move a mark across an existing closing quote.
+- Remove excessive or mannered dashes. Preserve a dash when it is the clearest punctuation, part of a title or range, or consistent with the requested voice.
 
-## 13. Output
+## 13. Mandatory Final Proofread
 
-Return only the requested output. Add one sentence only for a material risk, a failure, a skipped target, or a P1/P2 conflict.
+After applying the shared rules and every selected style profile, proofread each final text or document once from beginning to end before returning it or reporting completion. This pass is mandatory even when the main edit made few or no changes.
+
+During this verification pass:
+
+- Confirm that facts, meaning, attribution, uncertainty, modality, quotations, and protected text still match the source.
+- Correct any remaining or newly introduced grammar, spelling, punctuation, sentence-boundary, agreement, reference, or typographical error.
+- Check terminology, names, numbers, dates, dialect, voice, house style, and the selected profile for consistency.
+- Check sentence and paragraph flow, repetition, unnecessary explanation, and unresolved AI markers in context.
+- In file mode, confirm that headings, lists, tables, links, anchors, code, and front matter remain structurally intact.
+
+Make only corrections supported by the source and the applicable rules. Do not turn the proofread into another open-ended rewrite, expand the requested scope, or add new information. In file mode, proofread the final draft before overwriting the target, then verify that the saved file is readable and structurally intact.
+
+## 14. Output
+
+Return only the requested output. Add one sentence only for a material risk, failure, skipped target, or P1/P2 conflict.
 
 ## Examples
 
 | Case | Before | After | Why |
 | --- | --- | --- | --- |
-| Words and hedges | `We can probably utilize the new process to really improve approvals.` | `The new process will likely speed up approvals, though we have not measured it yet.` | `utilize` and `really` go, `can` is padding. `probably` marks real uncertainty, so it survives as a stated limit. |
-| Load-bearing modal | `Reviewers may reject a submission after the deadline.` | unchanged | `may` grants permission. Cutting it makes rejection sound automatic. |
-| Given to new | `A cache invalidation bug that the team found last week causes the stale reads.` | `The stale reads come from a cache invalidation bug the team found last week.` | Known information first, new information last. |
-| Negative parallelism, vague claim | `This is not merely a refactor, it is a rethinking of the pipeline. It significantly improves throughput.` | `This refactor restructures the pipeline. Throughput rose from 4k to 11k events per second.` | One positive claim, and the number replaces `significantly`. Drop the claim when no number exists. |
-| Trailing participial | `The team shipped the migration in March, demonstrating the value of incremental rollout.` | `The team shipped the migration in March. The incremental rollout kept each step reversible.` | The participle asserted a lesson with no subject. |
-| Connective | `The cache reduced latency. However, it introduced stale reads.` | `The cache reduced latency, but it introduced stale reads.` | Concessive relation, so `but` carries it. Never `so`. |
-| Grammar over style | `Updating the config, the service failed to restart.` | `When we updated the config, the service failed to restart.` | The modifier dangled. Fix even when asked only to shorten. |
-| Paragraph merge | `The API supports webhooks. Webhooks are supported for events. You register a URL and we post to it.` | `The API supports webhooks: register a URL and we post events to it.` | Three sentences, one idea. Position in the document is unchanged. |
-| Path as text | `Rewrite this sentence: Save it to docs/release-notes.md when ready.` | `Save it to docs/release-notes.md when it is ready.` | Path sits inside the sentence, so it is static text and stays verbatim. |
-| Restatement | `It is important to note that the cache layer sits in front of the database. The cache layer is placed before the database so reads do not hit it directly.` | `The cache sits in front of the database, so reads do not hit it directly.` | Throat-clearing frame, then a sentence restating the first. Merged, and no fact lost. |
-| Quote punctuation | `"...reserved for qualified Americans in need," a spokesperson said.` | unchanged | The comma sits inside the closing mark in the source. P3 outranks the logical-quoting style rule, so the placement stays. |
-| Attribution hedge | `The department plans to revoke the visas of people who, it said, came billing themselves as visitors.` | unchanged | `it said` and `billing themselves as` look like padding but attribute the characterization. Cutting them asserts it as fact. |
-| Concision floor | `The job retries three times. Each retry waits twice as long as the last, so the third wait is four seconds.` | unchanged | The second sentence looks like restatement but carries the backoff rule and a number. Cutting it loses information, so rule 7 stops. |
-| File target | `Refine docs/release-notes.md.` | Read fully, preserve literals, overwrite prose, report `Changed docs/release-notes.md.` | File mode writes and reports. |
+| Words and uncertainty | `We can probably utilize the new process to really improve approvals.` | `We can probably use the new process to improve approvals.` | `utilize` and `really` add no meaning. `can` and `probably` preserve ability and uncertainty. |
+| Load-bearing modal | `Reviewers may reject a submission after the deadline.` | unchanged | `may` grants permission or marks possibility. Cutting it changes the claim. |
+| Given to new | `A cache invalidation bug that the team found last week causes the stale reads.` | `The stale reads come from a cache invalidation bug the team found last week.` | Known information comes first and no fact changes. |
+| Negative parallelism | `This is not merely a refactor, it is a rethinking of the pipeline. It significantly improves throughput.` | `This refactor rethinks the pipeline and significantly improves throughput.` | The positive claim replaces the stock contrast. No measurement is added. |
+| Trailing participial | `The team shipped the migration in March, demonstrating the value of incremental rollout.` | `The team's March migration demonstrated the value of an incremental rollout.` | The revision gives `demonstrated` a stated subject and adds no claim. |
+| Connective | `The cache reduced latency. However, it introduced stale reads.` | `The cache reduced latency, but it introduced stale reads.` | `but` carries the concession. |
+| Grammar over style | `Updating the config, the service failed to restart.` | `When we updated the config, the service failed to restart.` | The revision repairs the dangling modifier. |
+| Paragraph merge | `The API supports webhooks. Webhooks are supported for events. You register a URL and we post to it.` | `The API supports webhooks: register a URL and we post events to it.` | The revision keeps the unique information and removes repetition. |
+| Path as text | `Rewrite this sentence: Save it to docs/release-notes.md when ready.` | `Save it to docs/release-notes.md when it is ready.` | The path appears inside prose to rewrite, so it stays verbatim. |
+| Quote punctuation | `"...reserved for qualified Americans in need," a spokesperson said.` | unchanged | Existing quoted source material stays verbatim. |
+| Attribution hedge | `The department plans to revoke the visas of people who, it said, came billing themselves as visitors.` | unchanged | `it said` and `billing themselves as` attribute the characterization. Cutting them would assert it as fact. |
+| Concision floor | `The job retries three times. Each retry waits twice as long as the last, so the third wait is four seconds.` | unchanged | The second sentence carries the backoff rule and a number. |
+| AI self-reference | `As an AI language model, I can explain the configuration.` | `I can explain the configuration.` | The disclosure is irrelevant to the requested prose. Preserve it when disclosure is required or AI is the subject. |
+| File target | `Refine docs/release-notes.md.` | Read fully, preserve protected text and structure, overwrite changed prose, and report `Changed docs/release-notes.md.` | File mode writes and reports. |
