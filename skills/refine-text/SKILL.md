@@ -47,7 +47,7 @@ Every default style rule yields when meaning requires it. Preserve a flagged for
 - Ask before overwriting on broad globs, large match sets, or ambiguous intent.
 - If a glob matches nothing or a file fails to read, say so. Never fabricate output.
 
-## Style Profiles
+## 4. Style Profiles
 
 Choose one primary profile. Read only the references required for the current text.
 
@@ -69,9 +69,9 @@ Do not infer Google or Microsoft house style merely because a document discusses
 
 A profile governs style and organization only. It never authorizes new facts, legal analysis, reporting, citations, holdings, policy, or substantive requirements.
 
-## 4. Context and Edit Depth
+## 5. Context and Edit Depth
 
-Before editing, identify the text's purpose, audience, genre, point of view, formality, emotional register, terminology, voice, and structural conventions. Resolve context in this order: the user's explicit request, consistent document-wide conventions, then genre defaults. Do not mistake an isolated inconsistency for intentional voice. When the context does not establish a special register, use plain natural language. Do not manufacture personality, opinions, emotion, or personal experience.
+Before editing, identify the text's purpose, audience, genre, point of view, formality, emotional register, terminology, voice, and structural conventions. Resolve context in the order given in section 4. Do not mistake an isolated inconsistency for intentional voice. When the context does not establish a special register, use plain natural language. Do not manufacture personality, opinions, emotion, or personal experience.
 
 Preserve source-supplied first-person observations, anecdotes, concrete nouns, dates, locations, sensory details, and distinctive phrasing when they contribute meaning or voice. Never manufacture them.
 
@@ -83,7 +83,7 @@ Preserve source-supplied first-person observations, anecdotes, concrete nouns, d
 - In file mode, preserve heading levels, list nesting, table columns, link targets, anchors, and front matter.
 - Leave a sentence unchanged when it is already accurate, clear, natural, and not redundant. Prefer the smallest edit that fixes the defect.
 
-## 5. Grammar and Terminology (P4)
+## 6. Grammar and Terminology (P4)
 
 Fix grammatical errors throughout the requested scope, including sentences that need no stylistic edit. Dialect and regional standard forms are not errors.
 
@@ -99,7 +99,7 @@ Fix grammatical errors throughout the requested scope, including sentences that 
 | Sentence boundaries | Fix comma splices, run-ons, and unintended fragments. Preserve a fragment that belongs to the established voice. |
 | Terminology | Use the same term for the same concept. Do not alternate among near-synonyms merely for variety. Preserve domain distinctions, capitalization, and terms of art. Do not merge terms that may differ without evidence from the source. |
 
-## 6. Sentence Construction
+## 7. Sentence Construction
 
 | Rule | Repair |
 | --- | --- |
@@ -109,7 +109,7 @@ Fix grammatical errors throughout the requested scope, including sentences that 
 | One idea per sentence | Carry one main idea when practical. |
 | Natural rhythm | Break runs of uniform sentence length, repeated openings, identical clause patterns, and overbalanced pairs. Vary structure only when it improves clarity, rhythm, or emphasis. |
 
-## 7. Concision
+## 8. Concision
 
 Cut only what loses no fact, function, caveat, emphasis, or intentional voice. Keep numbers and qualifiers that change meaning. Preserve attribution and evidentiary hedges such as `it said`, `according to`, `alleged`, `reportedly`, `described as`, `billing themselves as`, `sought to`, and `deemed`. Cutting one can turn a reported claim into the writer's assertion.
 
@@ -127,7 +127,7 @@ Never add a characterizing word to an attribution: `said` does not become `conce
 
 A successful edit may remain close to the original length. Stop when further cutting would remove meaning, useful emphasis, or voice. Never cut into meaning to hit a length target.
 
-## 8. AI Markers
+## 9. AI Markers
 
 AI markers are contextual patterns, not proof of authorship or forbidden words. Judge them across the sentence, paragraph, and document. Remove a marker when it makes the prose generic, repetitive, mechanical, inflated, or poorly adapted to its context. Preserve it when it carries meaning, factual uncertainty, attribution, required disclosure, or intentional voice.
 
@@ -138,7 +138,7 @@ AI markers are contextual patterns, not proof of authorship or forbidden words. 
 | Unnecessary explanation | Background, previews, recaps, or deductions the audience does not need | Keep the claim and remove the scaffolding. Preserve context needed for comprehension. |
 | Generic abstraction | Vague language where the source already supplies concrete detail | Use the supplied detail. Never invent anecdotes, experiences, measurements, quotations, or examples. |
 | Predictable syntax | Uniform sentence length, repeated `X is Y because` forms, matched paragraph shapes, or formulaic introductions and conclusions | Vary openings and structure where it improves the reading flow. |
-| Terminology drift | Different words used for the same concept without a reason, or technical terms used imprecisely | Apply the terminology rule in section 5. |
+| Terminology drift | Different words used for the same concept without a reason, or technical terms used imprecisely | Apply the terminology rule in section 6. |
 | Negative parallelism | `It is not a tool, it is a platform` or `not just X, but also Y` used as a stock contrast | State the positive claim directly. Preserve a contrast that carries real meaning or voice. |
 | Padded list | A trio such as `fast, reliable, and scalable` in which an item adds no information | Keep every substantive item and cut padding. Count content, not items. |
 | Trailing participial | A sentence ends with an `-ing` clause that adds a vague lesson or claim | Cut the clause, or make it a sentence with a stated subject using only source-supported information. |
@@ -148,11 +148,11 @@ AI markers are contextual patterns, not proof of authorship or forbidden words. 
 | Vague claim | `This significantly improves performance` without supporting detail | Use a measurement only when the source provides one. Otherwise preserve the claim, refine it with supplied information, or flag it for verification. Never invent evidence. |
 | Empty hedge | `It is important to note that` or `In general` delays a claim without expressing uncertainty | Remove the frame. Preserve hedges that mark probability, attribution, legal qualification, evidentiary limits, or confidence. |
 | AI self-reference | Irrelevant boilerplate such as `As an AI language model` | Remove it when it does not belong in the requested document. Preserve AI references when AI is the subject, the wording is quoted, or disclosure is required. |
-| Context mismatch | The text defaults to a generic template instead of the document's genre, audience, intent, or voice | Apply the context pass in section 4. Do not turn specialized or expressive prose into generic business language. |
+| Context mismatch | The text defaults to a generic template instead of the document's genre, audience, intent, or voice | Apply the context pass in section 5. Do not turn specialized or expressive prose into generic business language. |
 
 Cut clichés, empty metaphors, unsupported generalizations, promotional judgments, and unsolicited commentary. Preserve figurative language that carries meaning or belongs to the requested voice.
 
-## 9. Words in Context
+## 10. Words in Context
 
 Never treat an isolated word as proof of AI writing. Inflections and derived forms count only when the use has the same defect.
 
@@ -167,7 +167,7 @@ Never treat an isolated word as proof of AI writing. Inflections and derived for
 
 `craft`, `discover`, `imagine`, `realm`, `intricate`, and similar words are ordinary English. Replace them only when their particular use inflates or obscures the meaning.
 
-## 10. Connectives and Flow
+## 11. Connectives and Flow
 
 Do not delete a connective when doing so loses a genuine relation. Match the repair to the logic.
 
@@ -180,7 +180,7 @@ Do not delete a connective when doing so loses a genuine relation. Match the rep
 
 `so` is causal and never substitutes for a concession.
 
-## 11. Modality (P1)
+## 12. Modality (P1)
 
 `can`, `may`, `could`, `must`, and `should` carry different meanings. Never swap one for another, and never delete one as filler.
 
@@ -191,7 +191,7 @@ Do not delete a connective when doing so loses a genuine relation. Match the rep
 | `could` | Conditional or possibility. Keep unless it hedges a verified fact. |
 | `must`, `should` | Obligation strength. Never adjust. In policy, legal, and API contracts the difference is the requirement. |
 
-## 12. Tone and Voice
+## 13. Tone and Voice
 
 - Use plain, natural language unless the genre or requested voice calls for another register.
 - Use `you` where the genre takes direct address, including documentation, instructions, and customer-facing copy. Narrative, legal, and academic prose usually do not.
@@ -202,7 +202,7 @@ Do not delete a connective when doing so loses a genuine relation. Match the rep
 - For quote marks you introduce, follow the source document's punctuation convention. Never restyle punctuation in quoted source material or move a mark across an existing closing quote.
 - Remove excessive or mannered dashes. Preserve a dash when it is the clearest punctuation, part of a title or range, or consistent with the requested voice.
 
-## 13. Mandatory Final Proofread
+## 14. Mandatory Final Proofread
 
 After applying the shared rules and every selected style profile, proofread each final text or document once from beginning to end before returning it or reporting completion. This pass is mandatory even when the main edit made few or no changes.
 
@@ -216,11 +216,11 @@ During this verification pass:
 
 Make only corrections supported by the source and the applicable rules. Do not turn the proofread into another open-ended rewrite, expand the requested scope, or add new information. In file mode, proofread the final draft before overwriting the target, then verify that the saved file is readable and structurally intact.
 
-## 14. Output
+## 15. Output
 
 Return only the requested output. Add one sentence only for a material risk, failure, skipped target, or P1/P2 conflict.
 
-## Examples
+## 16. Examples
 
 | Case | Before | After | Why |
 | --- | --- | --- | --- |

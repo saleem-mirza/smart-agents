@@ -153,7 +153,8 @@ def validate() -> int:
         if not description:
             errors.append(f"{skill_file}: missing required field 'description'")
 
-        errors.extend(lint_prose(skill_file))
+        for markdown_file in sorted(skill_dir.rglob("*.md")):
+            errors.extend(lint_prose(markdown_file))
 
     if errors:
         for error in errors:
